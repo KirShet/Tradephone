@@ -7,7 +7,7 @@ include './core.php';
 // $query = "SELECT `id`, `name`, `price`, `description`, `img` FROM `products`";
 // $result = mysqli_query($mysqli, $query); 
 // $products = $result->fetch_assoc();
-var_dump($_GET);
+// var_dump($_GET);
 if(isset($_SESSION['db_products']) && isset($_GET)){
     unset ($_SESSION['db_products']['error']);
 }
@@ -251,10 +251,10 @@ if($result->num_rows == 0){
                             </div>
                             <div class="googs_range">
                                 <div class="range_left">
-                                    <input type="number" id="range_left" name="range_min" value="1000" min="1000" max="80000">
+                                    <input type="number" id="range_left" name="range_min" value="1" min="1" max="80000">
                                 </div>
                                 <div class="range_right">
-                                    <input type="number" id="range_right" name="range_max" value="80000" min="1000" max="80000">
+                                    <input type="number" id="range_right" name="range_max" value="80000" min="1" max="80000">
                                 </div>
                             </div>
 

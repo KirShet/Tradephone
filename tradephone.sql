@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Ноя 24 2023 г., 10:36
+-- Время создания: Ноя 27 2023 г., 11:57
 -- Версия сервера: 10.8.4-MariaDB
 -- Версия PHP: 8.1.9
 
@@ -104,30 +104,32 @@ CREATE TABLE `products` (
   `model_id` int(11) DEFAULT NULL,
   `release_year` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `diagonal` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `resolution` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+  `resolution` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `point` int(11) NOT NULL DEFAULT 0,
+  `count_reviews` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Дамп данных таблицы `products`
 --
 
-INSERT INTO `products` (`id`, `name`, `price`, `description`, `img`, `guarantee`, `model`, `model_id`, `release_year`, `diagonal`, `resolution`) VALUES
-(2, 'xiaomi mi5', 29990, 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sequi, doloremque et aliquid dicta commodi adipisci perspiciatis ullam laboriosam cupiditate eum odio natus culpa cum a autem distinctio, accusantium fugiat? Aspernatur.', 'grid-catalog.png', '12', 'Samsung Galaxy A23', 3, '2022', '6.6', '2408х1080'),
-(4, '', 29990, '22 33 22', 'grid-catalog.png', NULL, NULL, 3, NULL, NULL, NULL),
-(5, '', 29990, '2222', 'grid-catalog.png', NULL, NULL, 2, NULL, NULL, NULL),
-(6, '', 29990, '1111', 'grid-catalog.png', NULL, NULL, 2, NULL, NULL, NULL),
-(7, '', 29990, '555', 'grid-catalog.png', NULL, NULL, 4, NULL, NULL, NULL),
-(8, '', 29990, '6666', 'grid-catalog.png', NULL, NULL, 4, NULL, NULL, NULL),
-(9, '', 29990, '111 2  2 2 2', 'grid-catalog.png', NULL, NULL, 1, NULL, NULL, NULL),
-(10, '', 29990, '22223', 'grid-catalog.png', NULL, NULL, 1, NULL, NULL, NULL),
-(11, 'hhhh', 8888, '88888888888888888888888888888888888888888m iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii', '652cda9297daf.png', NULL, NULL, 4, NULL, NULL, NULL),
-(12, '7777', 77777, '77777', 'Capture001.png', NULL, NULL, 3, NULL, NULL, NULL),
-(14, '12', 12, '111111111222222222', '6536105b3ba90.png', '12', '12', 2, '12', '12', '12'),
-(15, '111', 1, '1', '6536131076adb.png', '111', '11', 4, '1', '1', '1'),
-(16, '111122', 11, '11', '655b1538450fc.png', '11', '11', 4, '11', '11', '11'),
-(17, '22111', 22, '222', '655b1be55d02f.png', '222', '222', 4, '22', '22', '22'),
-(18, '333', 34, '33', '655c50c09bedc.png', '333', '333', 3, '333', '333', '33'),
-(19, '44', 44, '44', '655c59939ff11.png', '44', '44', 1, '44', '44', '44');
+INSERT INTO `products` (`id`, `name`, `price`, `description`, `img`, `guarantee`, `model`, `model_id`, `release_year`, `diagonal`, `resolution`, `point`, `count_reviews`) VALUES
+(2, 'xiaomi mi5', 29990, 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sequi, doloremque et aliquid dicta commodi adipisci perspiciatis ullam laboriosam cupiditate eum odio natus culpa cum a autem distinctio, accusantium fugiat? Aspernatur.', 'grid-catalog.png', '12', 'Samsung Galaxy A23', 3, '2022', '6.6', '2408х1080', 0, 0),
+(4, 'Xiaomi', 29990, '22 33 22', 'grid-catalog.png', NULL, NULL, 3, NULL, NULL, NULL, 0, 0),
+(5, 'Взрывное предложение', 29990, '2222', 'grid-catalog.png', NULL, NULL, 2, NULL, NULL, NULL, 0, 0),
+(6, 'Взрывное предложение', 29990, '1111', 'grid-catalog.png', NULL, NULL, 2, NULL, NULL, '2408х1080', 11, 3),
+(7, 'Tecno', 29990, '555', 'grid-catalog.png', NULL, NULL, 4, NULL, NULL, NULL, 0, 0),
+(8, 'Tecno', 29990, '6666', 'grid-catalog.png', NULL, NULL, 4, NULL, NULL, NULL, 0, 0),
+(9, 'Apple', 29990, '111 2  2 2 2', 'grid-catalog.png', NULL, NULL, 1, NULL, NULL, NULL, 0, 0),
+(10, 'Apple', 29990, '22223', 'grid-catalog.png', NULL, NULL, 1, NULL, NULL, NULL, 0, 0),
+(11, 'Tecno', 8888, '88888888888888888888888888888888888888888m iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii', '652cda9297daf.png', NULL, NULL, 4, NULL, NULL, NULL, 0, 0),
+(12, 'Xiaomi', 77777, '77777', 'Capture001.png', NULL, NULL, 3, NULL, NULL, NULL, 0, 0),
+(14, 'Не забываемое', 12, '111111111222222222', '6536105b3ba90.png', '12', '12', 2, '12', '12', '12', 0, 0),
+(15, 'Tecno', 1, '1', '6536131076adb.png', '111', '11', 4, '1', '1', '1', 0, 0),
+(16, 'Tecno', 11, '11', '655b1538450fc.png', '11', '11', 4, '11', '11', '11', 0, 0),
+(17, 'Tecno', 22, '222', '655b1be55d02f.png', '222', '222', 4, '22', '22', '22', 0, 0),
+(18, 'Xiaomi', 34, '33', '655c50c09bedc.png', '333', '333', 3, '333', '333', '33', 0, 0),
+(19, 'Apple', 44, '44', '655c59939ff11.png', '44', '44', 1, '44', '44', '44', 0, 0);
 
 -- --------------------------------------------------------
 
@@ -219,6 +221,29 @@ INSERT INTO `product_memory` (`id`, `product_id`, `memory_id`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Структура таблицы `reviews`
+--
+
+CREATE TABLE `reviews` (
+  `id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `point` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Дамп данных таблицы `reviews`
+--
+
+INSERT INTO `reviews` (`id`, `product_id`, `name`, `description`, `point`) VALUES
+(3, 6, 'Аркадий', 'сим', 5),
+(4, 6, 'Укупник', 'сим', 1),
+(5, 6, '+', '-', 5);
+
+-- --------------------------------------------------------
+
+--
 -- Структура таблицы `subscriptions`
 --
 
@@ -300,6 +325,13 @@ ALTER TABLE `product_memory`
   ADD KEY `memory_id` (`memory_id`);
 
 --
+-- Индексы таблицы `reviews`
+--
+ALTER TABLE `reviews`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `product_id` (`product_id`);
+
+--
 -- Индексы таблицы `subscriptions`
 --
 ALTER TABLE `subscriptions`
@@ -352,6 +384,12 @@ ALTER TABLE `product_memory`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
+-- AUTO_INCREMENT для таблицы `reviews`
+--
+ALTER TABLE `reviews`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- AUTO_INCREMENT для таблицы `subscriptions`
 --
 ALTER TABLE `subscriptions`
@@ -386,6 +424,12 @@ ALTER TABLE `product_colors`
 ALTER TABLE `product_memory`
   ADD CONSTRAINT `product_memory_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `product_memory_ibfk_2` FOREIGN KEY (`memory_id`) REFERENCES `memory` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Ограничения внешнего ключа таблицы `reviews`
+--
+ALTER TABLE `reviews`
+  ADD CONSTRAINT `reviews_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

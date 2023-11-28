@@ -24,6 +24,14 @@ if ($_GET['id']) {
         header("Location: " . $_SERVER['HTTP_REFERER']);
     }
     $product = $products->fetch_assoc();
+    $productReviews = mysqli_query($mysqli, "SELECT * FROM `reviews` WHERE product_id = '{$_GET['id']}'");
+
+    $productsHits =  mysqli_query($mysqli, "SELECT `products`.*, `product_colors`.*, `product_memory`.*, `makes`.* FROM `products`
+    LEFT JOIN `product_colors` ON `product_colors`.`product_id` = `products`.`id` 
+    LEFT JOIN `product_memory` ON `product_memory`.`product_id` = `products`.`id` 
+    LEFT JOIN `makes` ON `products`.`model_id` = `makes`.`id`
+    GROUP BY `products`.`id` ORDER BY `products`.`point`/ `products`.`count_reviews` DESC LIMIT 5
+");
 }else if(isset($_SERVER['HTTP_REFERER'])){
     header("Location: " . $_SERVER['HTTP_REFERER']);
 } else {
@@ -62,16 +70,44 @@ if ($_GET['id']) {
                     <h3>Напишите свой отзыв</h3>
                 </div>
             </div>
-            <div class="main-modal-name">
-                <input type="text" id="modal-name" placeholder="Имя">
-            </div>
-            <div class="main-modal-text">
-                <textarea name="modal-text" id="modal-text" placeholder="текст отзыва"></textarea>
 
-            </div>
-            <div class="main-modal__button">
-                <button id="modal-add" name="modal-add">Добавить отзыв</button>
-            </div>
+            <form action="/product/review-add.php" method="post">
+                <!-- ,kjr -->
+                <div class="main-admin-update-inputs">
+                    <select name="product_point" id="">
+                        <option value="1">Звёзд: 1</option>
+                        <option value="2">Звёзд: 2</option>
+                        <option value="3">Звёзд: 3</option>
+                        <option value="4">Звёзд: 4</option>
+                        <option value="5">Звёзд: 5</option>
+                    </select>
+                </div>
+                <!-- ,kjr -->
+                <input type="hidden" name="product_id" value="<?=$product['id']?>">
+                <!-- jjh -->
+                <div class="main-modal-name">
+                    <input type="text" id="modal-name" 
+                    name="modal-name" 
+                    placeholder="Имя">
+                </div>
+                <div class="main-modal-text">
+                    <textarea name="modal-text" id="modal-text" placeholder="текст отзыва"></textarea>
+                </div>
+                <div class="main-modal__button">
+                    <button id="modal-add" name="modal-add">Добавить отзыв</button>
+                </div>
+            </form>
+                <?php
+                    if(isset($_SESSION['errors_modal-add'])){
+                        foreach ($_SESSION['errors_modal-add'] as $key => $value){
+                            if($value!="modal-add"){
+                                echo "<p style='color:red; font-size: 20px'>$value</p>";
+                            }
+                        }
+                    }
+                    // unset($_SESSION['errors_modal-add']);
+                    // var_dump($_SESSION['errors_modal-add']);
+                ?>
         </div>
     </div>
     <!-- конец модального окна -->
@@ -82,16 +118,34 @@ if ($_GET['id']) {
                     <p><?= $product['name'] ?></p>
                 </div>
                 <div class="main-top-status">
-                    <img src="./assets/img/true-status.png" alt="" id="status1">
-                    <img src="./assets/img/true-status.png" alt="" id="status2">
-                    <img src="./assets/img/true-status.png" alt="" id="status3">
-                    <img src="./assets/img/false-status.png" alt="" id="status4">
-                    <img src="./assets/img/false-status.png" alt="" id="status5">
+                <?php 
+                    if(!$product['count_reviews'] == 0){
+                ?>
+                    <?$star = $product['point']/$product['count_reviews']?>
+                    <?=$star?>
+                                <?php
+                                $i=0;
+                                    while ($i < $star):
+                                        $i++;
+                                        // echo $i;
+                                        ?>
+                                        <img src="./assets/img/true-status.png" alt="" id="status1">
+                                        <?php
+                                    endwhile;?>
+                                     <?php
+                                    while ($star < 4.5):
+                                        $star++;
+                                        // echo $star;
+                                        ?>
+                                        <img src="./assets/img/false-status.png" alt="" id="status5">
+                                        <?php
+                                    endwhile;?>
+                                    <?php } ?>
                 </div>
             </div>
             <div class="main-top-review">
                 <div class="main-top-review__p">
-                    <p>250 отзывов</p>
+                    <p><?= $product['count_reviews']?> отзыв(а/ов)</p>
                 </div>
             </div>
             <div class="main-middle">
@@ -243,170 +297,55 @@ if ($_GET['id']) {
                     </div>
                 </div>
             </div>
+            <?php 
+                if($productReviews -> num_rows > 0){
+            ?>
             <div class="main-reviews">
                 <div class="main-reviesw__h">
                     <h1>ОТЗЫВЫ</h1>
                 </div>
-                <!-- <div class="main-reviews-block swiper-container">
-                    <div class="main-reviews-item">
-                        <div class="main-reviews-item__h-status">
-                            <div class="main-reviews-item__h">
-                                <h3>Василий</h3>
-                            </div>
-                            <div class="main-reviews-item-status">
-                                <img src="../assets/img/true-status.png" alt="" id="status1">
-                    <img src="../assets/img/true-status.png" alt="" id="status2">
-                    <img src="../assets/img/true-status.png" alt="" id="status3">
-                    <img src="../assets/img/false-status.png" alt="" id="status4">
-                    <img src="../assets/img/false-status.png" alt="" id="status5">
-                            </div>
-                        </div>
-                            <div class="main-reviesw__p">
-                                <p>Смартфон отличный, цвет веселый. Брал для дочери в подарок, 
-                                    она любит всё яркое. Все приложения запускаются быстро, 
-                                    работает без нареканий.</p>
-                            </div>
-                            <div class="main-reviesw-date">
-                              <p>29.12.2022</p>  
-                            </div>
-                    </div>
-                
-                    <div class="main-reviews-item">
-                        <div class="main-reviews-item__h-status">
-                            <div class="main-reviews-item__h">
-                                <h3>Василий</h3>
-                            </div>
-                            <div class="main-reviews-item-status">
-                                <img src="../assets/img/true-status.png" alt="" id="status1">
-                    <img src="../assets/img/true-status.png" alt="" id="status2">
-                    <img src="../assets/img/true-status.png" alt="" id="status3">
-                    <img src="../assets/img/false-status.png" alt="" id="status4">
-                    <img src="../assets/img/false-status.png" alt="" id="status5">
-                            </div>
-                        </div>
-                            <div class="main-reviesw__p">
-                                <p>Смартфон отличный, цвет веселый. Брал для дочери в подарок, 
-                                    она любит всё яркое. Все приложения запускаются быстро, 
-                                    работает без нареканий.</p>
-                            </div>
-                            <div class="main-reviesw-date">
-                              <p>29.12.2022</p>  
-                            </div>
-                    </div>
-                
-                    <div class="main-reviews-item">
-                        <div class="main-reviews-item__h-status">
-                            <div class="main-reviews-item__h">
-                                <h3>Василий</h3>
-                            </div>
-                            <div class="main-reviews-item-status">
-                                <img src="../assets/img/true-status.png" alt="" id="status1">
-                    <img src="../assets/img/true-status.png" alt="" id="status2">
-                    <img src="../assets/img/true-status.png" alt="" id="status3">
-                    <img src="../assets/img/false-status.png" alt="" id="status4">
-                    <img src="../assets/img/false-status.png" alt="" id="status5">
-                            </div>
-                        </div>
-                            <div class="main-reviesw__p">
-                                <p>Смартфон отличный, цвет веселый. Брал для дочери в подарок, 
-                                    она любит всё яркое. Все приложения запускаются быстро, 
-                                    работает без нареканий.</p>
-                            </div>
-                            <div class="main-reviesw-date">
-                              <p>29.12.2022</p>  
-                            </div>
-                    </div>
-                </div> -->
                 <div class="swiper-container main-reviesw-block">
                     <div class="swiper-wrapper">
+                        <?php 
+                            foreach($productReviews as $key => $review):
+                        ?>
                         <div class="main-reviews-item swiper-slide card">
                             <div class="main-reviews-item__h-status">
                                 <div class="main-reviews-item__h">
-                                    <h3>Василий</h3>
+                                    <h3><?= $review['name']?></h3>
                                 </div>
                                 <div class="main-reviews-item-status">
-                                    <img src="./assets/img/true-status.png" alt="" id="status1">
+                                <p style="font-size: 18px;">Оценка: <span style="color: #C14231;"><?= $review['point']?></span></p>
+                                <?php
+                                $i=0;
+                                    while ($i < $review['point']):
+                                        $i++;
+                                        ?>
+                                        <img src="./assets/img/true-status.png" alt="" id="status1">
+                                        <?php
+                                    endwhile;?>
+                                     <?php
+                                    while ($review['point'] < 5):
+                                        $review['point']++;
+                                        ?>
+                                        <img src="./assets/img/false-status.png" alt="" id="status5">
+                                        <?php
+                                    endwhile;?>
+                                    <!-- <img src="./assets/img/true-status.png" alt="" id="status1">
                                     <img src="./assets/img/true-status.png" alt="" id="status2">
                                     <img src="./assets/img/true-status.png" alt="" id="status3">
                                     <img src="./assets/img/false-status.png" alt="" id="status4">
-                                    <img src="./assets/img/false-status.png" alt="" id="status5">
+                                    <img src="./assets/img/false-status.png" alt="" id="status5"> -->
                                 </div>
                             </div>
                             <div class="main-reviesw__p">
-                                <p>Смартфон отличный, цвет веселый. Брал для дочери в подарок,
-                                    она любит всё яркое. Все приложения запускаются быстро,
-                                    работает без нареканий.</p>
+                                <p><?= $review['description']?></p>
                             </div>
                             <div class="main-reviesw-date">
                                 <p>29.12.2022</p>
                             </div>
                         </div>
-                        <div class="main-reviews-item swiper-slide card">
-                            <div class="main-reviews-item__h-status">
-                                <div class="main-reviews-item__h">
-                                    <h3>Василий</h3>
-                                </div>
-                                <div class="main-reviews-item-status">
-                                    <img src="./assets/img/true-status.png" alt="" id="status1">
-                                    <img src="./assets/img/true-status.png" alt="" id="status2">
-                                    <img src="./assets/img/true-status.png" alt="" id="status3">
-                                    <img src="./assets/img/false-status.png" alt="" id="status4">
-                                    <img src="./assets/img/false-status.png" alt="" id="status5">
-                                </div>
-                            </div>
-                            <div class="main-reviesw__p">
-                                <p>Смартфон отличный, цвет веселый. Брал для дочери в подарок,
-                                    она любит всё яркое. Все приложения запускаются быстро,
-                                    работает без нареканий.</p>
-                            </div>
-                            <div class="main-reviesw-date">
-                                <p>29.12.2022</p>
-                            </div>
-                        </div>
-                        <div class="main-reviews-item swiper-slide card">
-                            <div class="main-reviews-item__h-status">
-                                <div class="main-reviews-item__h">
-                                    <h3>Вdsfdsfs</h3>
-                                </div>
-                                <div class="main-reviews-item-status">
-                                    <img src="./assets/img/true-status.png" alt="" id="status1">
-                                    <img src="./assets/img/true-status.png" alt="" id="status2">
-                                    <img src="./assets/img/true-status.png" alt="" id="status3">
-                                    <img src="./assets/img/false-status.png" alt="" id="status4">
-                                    <img src="./assets/img/false-status.png" alt="" id="status5">
-                                </div>
-                            </div>
-                            <div class="main-reviesw__p">
-                                <p>Смартфон отличный, цвет веселый. Брал для дочери в подарок,
-                                    она любит всё яркое. Все приложения запускаются быстро,
-                                    работает без нареканий.</p>
-                            </div>
-                            <div class="main-reviesw-date">
-                                <p>29.12.2022</p>
-                            </div>
-                        </div>
-                        <div class="main-reviews-item swiper-slide card">
-                            <div class="main-reviews-item__h-status">
-                                <div class="main-reviews-item__h">
-                                    <h3>Василий</h3>
-                                </div>
-                                <div class="main-reviews-item-status">
-                                    <img src="./assets/img/true-status.png" alt="" id="status1">
-                                    <img src="./assets/img/true-status.png" alt="" id="status2">
-                                    <img src="./assets/img/true-status.png" alt="" id="status3">
-                                    <img src="./assets/img/false-status.png" alt="" id="status4">
-                                    <img src="./assets/img/false-status.png" alt="" id="status5">
-                                </div>
-                            </div>
-                            <div class="main-reviesw__p">
-                                <p>Смартфон отличный, цвет веселый. Брал для дочери в подарок,
-                                    она любит всё яркое. Все приложения запускаются быстро,
-                                    работает без нареканий.</p>
-                            </div>
-                            <div class="main-reviesw-date">
-                                <p>29.12.2022</p>
-                            </div>
-                        </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
                 <div class="main-reviesw-block__button">
@@ -414,12 +353,15 @@ if ($_GET['id']) {
                     <button class="swiper-button-let"></button>
                 </div>
             </div>
+            <?php }?>
             <div class="main-hits">
                 <div class="main-hits__h">
                     <h1>ХИТЫ ПРОДАЖ</h1>
                 </div>
                 <div class="main-hits-block">
-
+                <?php 
+                        foreach($productsHits as $key => $value):
+                    ?>
                     <div class="grid-catalog">
                         <div class="grid-catalog__img">
                             <img src="./assets/img/grid-catalog.png" alt="" id="grid-catalog">
@@ -448,96 +390,9 @@ if ($_GET['id']) {
                             <a href="" id="grid-catalog__a-more">Подробнее</a>
                         </div>
                     </div>
-                    <div class="grid-catalog">
-                        <div class="grid-catalog__img">
-                            <img src="./assets/img/grid-catalog.png" alt="" id="grid-catalog">
-                        </div>
-                        <div class="grid-catalog-middle">
-                            <div class="grid-catalog__h2">
-                                <h3>Apple IPhone 11</h3>
-                            </div>
-                            <div class="grid-catalog__button-color">
-                                <button id="color-black"></button>
-                                <button id="color-two"></button>
-                                <button id="color-three"></button>
-                            </div>
-                        </div>
-                        <div class="grid-catalog-bottom">
-                            <div class="grid-catalog__button-busket">
-                                <button id="btn-basket">
-                                    В корзину
-                                </button>
-                            </div>
-                            <div class="grid-catalog__p-count">
-                                <p>160$</p>
-                            </div>
-                        </div>
-                        <div class="grid-catalog__a-more">
-                            <a href="" id="grid-catalog__a-more">Подробнее</a>
-                        </div>
-                    </div>
-                    <div class="grid-catalog">
-                        <div class="grid-catalog__img">
-                            <img src="./assets/img/grid-catalog.png" alt="" id="grid-catalog">
-                        </div>
-                        <div class="grid-catalog-middle">
-                            <div class="grid-catalog__h2">
-                                <h3>Apple IPhone 11</h3>
-                            </div>
-                            <div class="grid-catalog__button-color">
-                                <button id="color-black"></button>
-                                <button id="color-two"></button>
-                                <button id="color-three"></button>
-                            </div>
-                        </div>
-                        <div class="grid-catalog-bottom">
-                            <div class="grid-catalog__button-busket">
-                                <button id="btn-basket">
-                                    В корзину
-                                </button>
-                            </div>
-                            <div class="grid-catalog__p-count">
-                                <p>160$</p>
-                            </div>
-                        </div>
-                        <div class="grid-catalog__a-more">
-                            <a href="" id="grid-catalog__a-more">Подробнее</a>
-                        </div>
-                    </div>
-                    <div class="grid-catalog">
-                        <div class="grid-catalog__img">
-                            <img src="./assets/img/grid-catalog.png" alt="" id="grid-catalog">
-                        </div>
-                        <div class="grid-catalog-middle">
-                            <div class="grid-catalog__h2">
-                                <h3>Apple IPhone 11</h3>
-                            </div>
-                            <div class="grid-catalog__button-color">
-                                <button id="color-black"></button>
-                                <button id="color-two"></button>
-                                <button id="color-three"></button>
-                            </div>
-                        </div>
-                        <div class="grid-catalog-bottom">
-                            <div class="grid-catalog__button-busket">
-                                <button id="btn-basket">
-                                    В корзину
-                                </button>
-                            </div>
-                            <div class="grid-catalog__p-count">
-                                <p>160$</p>
-                            </div>
-                        </div>
-                        <div class="grid-catalog__a-more">
-                            <a href="" id="grid-catalog__a-more">Подробнее</a>
-                        </div>
-                    </div>
-                    <div class="grid-catalog__a-catalog">
-
-                        <a href="" id="grid-catalog__a-catalog">Каталог</a>
-
-                    </div>
-
+                    <?php 
+                        endforeach;
+                    ?>
                 </div>
             </div>
         </div>
